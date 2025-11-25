@@ -11,7 +11,9 @@ window.App = window.App || {};
     guideColor: '#9ca3af',
     text: 'The quick brown fox jumps over the lazy dog.',
     mode: 'custom', // custom, sentences, alphabet
-    showGuides: true
+    showGuides: true,
+    textScale: 0.8,
+    baselineOffset: 2 // mm offset to push text down to baseline
   };
 
   let state = { ...DEFAULT_STATE };
@@ -52,6 +54,8 @@ window.App = window.App || {};
     $('#input-text').val(state.text);
     $('#setting-size').val(state.guideSize);
     $('#setting-font').val(state.fontFamily);
+    $('#setting-scale').val(state.textScale);
+    $('#setting-baseline').val(state.baselineOffset);
     $('#setting-color-text').val(state.fontColor);
     $('#setting-color-guide').val(state.guideColor);
     // Set active mode button
@@ -91,6 +95,19 @@ window.App = window.App || {};
 
     $('#setting-color-guide').on('input', function() {
       state.guideColor = $(this).val();
+      renderSheet();
+      saveState();
+    });
+
+    // Fine Tuning
+    $('#setting-scale').on('input', function() {
+      state.textScale = $(this).val();
+      renderSheet();
+      saveState();
+    });
+
+    $('#setting-baseline').on('input', function() {
+      state.baselineOffset = $(this).val();
       renderSheet();
       saveState();
     });
@@ -163,7 +180,6 @@ window.App = window.App || {};
      } catch(err) {
         console.error(err);
         alert('AI Error: ' + err.message);
-     } finally {
         $btn.prop('disabled', false).removeClass('opacity-50 cursor-wait');
         $progress.addClass('hidden');
         $status.text('');
@@ -197,7 +213,6 @@ window.App = window.App || {};
        $row.append($topLine, $midLine, $botLine);
        $guidesLayer.append($row);
     }
-    
     // 2. Text Layer (Overlay)
     // We use a single overlay to handle text wrapping automatically and ensuring visibility
     const $textLayer = $('<div>').addClass('absolute inset-0 z-10 w-full h-full whitespace-pre-wrap break-words overflow-hidden');
@@ -208,7 +223,8 @@ window.App = window.App || {};
         'color': state.fontColor,
         'padding-left': '10mm',
         'padding-right': '10mm',
-        'padding-top': '1mm' // Slight adjustment to sit nicely on the baseline
+        'padding-top': '1mm', // Slight adjustment to sit nicely on the baseline
+        'transform': `translateY(${state.baselineOffset || 0}mm)`
     });
     $textLayer.text(state.text || '');
     
