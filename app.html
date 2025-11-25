@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InkFlow Creator</title>
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss-cdn@3.4.10/tailwindcss.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="styles/main.css">
+    <style type="text/tailwindcss" data-teda="tailwind-apply">
+        @layer components {
+            .control-group { @apply mb-6; }
+            .control-label { @apply block text-xs font-bold text-stone-500 uppercase tracking-wider mb-2; }
+            .input-field { @apply w-full bg-white border border-stone-200 rounded-lg px-3 py-2 text-stone-800 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all; }
+            .btn-icon { @apply p-2 rounded-lg hover:bg-stone-100 text-stone-600 transition-colors; }
+        }
+    </style>
+</head>
+<body class="flex flex-col bg-[#e5e5e5] min-h-screen md:h-screen md:overflow-hidden">
+    
+    <!-- App Header -->
+    <header id="navbar" class="bg-white border-b border-stone-200 h-16 flex-none z-20">
+        <div class="h-full px-4 md:px-6 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div class="w-6 h-6 text-amber-600 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M75 25l-45 45H20v-10l45-45m10-5l5 5-10 10-5-5 10-10z" /></svg>
+                    </div>
+                    <span class="font-bold text-stone-800">InkFlow</span>
+                </a>
+                <div class="h-6 w-px bg-stone-200 mx-2"></div>
+                <h1 class="text-sm font-medium text-stone-500 hidden sm:block">Untitled Sheet</h1>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button id="btn-print" class="bg-stone-900 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-amber-600 transition-colors flex items-center gap-2 shadow-lg shadow-stone-900/10">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2-4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    Print / PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main id="app-container" class="flex-1 flex flex-col md:flex-row md:overflow-hidden">
+        
+        <!-- Sidebar Controls -->
+        <aside id="controls" class="w-full md:w-80 lg:w-96 bg-white border-b md:border-b-0 md:border-r border-stone-200 flex flex-col flex-none md:overflow-y-auto z-10">
+            <div class="p-6">
+                
+                <!-- Content Section -->
+                <div class="control-group">
+                    <label class="control-label">Content Mode</label>
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <button data-mode="custom" class="mode-btn text-sm py-2 rounded-md border border-stone-200 font-medium text-stone-600 hover:bg-stone-50">Custom</button>
+                        <button data-mode="alphabet" class="mode-btn text-sm py-2 rounded-md border border-stone-200 font-medium text-stone-600 hover:bg-stone-50">A-Z</button>
+                        <!-- button data-mode="words" class="mode-btn text-sm py-2 rounded-md border border-stone-200 font-medium text-stone-600 hover:bg-stone-50">Words</button -->
+                    </div>
+                    
+                    <textarea id="input-text" rows="5" class="input-field resize-none font-sans" placeholder="Type text to practice here..."></textarea>
+                    
+                    <!-- AI Generator Trigger -->
+                    <div class="mt-4 pt-4 border-t border-stone-100">
+                         <label class="control-label flex items-center justify-between">
+                             <span>AI Generator</span>
+                             <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">Local LLM</span>
+                         </label>
+                         <div class="flex gap-2">
+                             <input type="text" id="ai-topic" placeholder="Topic (e.g. Space, Dinosaurs)" class="input-field flex-1 text-sm">
+                             <button id="btn-generate-ai" class="bg-amber-50 text-amber-700 border border-amber-200 px-3 rounded-lg hover:bg-amber-100 transition-colors">
+                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                             </button>
+                         </div>
+                         
+                         <!-- Progress -->
+                         <div id="ai-progress" class="mt-2 hidden">
+                             <div class="flex justify-between text-xs text-stone-400 mb-1">
+                                 <span id="ai-status-text">Loading Model...</span>
+                             </div>
+                             <div class="h-1 w-full bg-stone-100 rounded-full overflow-hidden">
+                                 <div id="ai-progress-bar" class="h-full bg-amber-500 w-0 transition-all duration-300"></div>
+                             </div>
+                         </div>
+                    </div>
+                </div>
+
+                <hr class="border-stone-100 my-6">
+
+                <!-- Appearance Section -->
+                <div class="control-group">
+                    <label class="control-label">Line Settings</label>
+                    <div class="flex items-center gap-4 mb-4">
+                         <div class="flex-1">
+                             <span class="text-xs text-stone-400 mb-1 block">Size (mm)</span>
+                             <input type="range" id="setting-size" min="10" max="40" value="20" class="w-full accent-amber-600">
+                         </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="flex-1">
+                            <span class="text-xs text-stone-400 mb-1 block">Text Color</span>
+                            <div class="flex items-center gap-2 bg-white border border-stone-200 rounded-lg p-1">
+                                <input type="color" id="setting-color-text" value="#000000" class="w-6 h-6 rounded cursor-pointer border-none p-0">
+                                <span class="text-xs text-stone-500">Ink</span>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <span class="text-xs text-stone-400 mb-1 block">Guide Color</span>
+                            <div class="flex items-center gap-2 bg-white border border-stone-200 rounded-lg p-1">
+                                <input type="color" id="setting-color-guide" value="#9ca3af" class="w-6 h-6 rounded cursor-pointer border-none p-0">
+                                <span class="text-xs text-stone-500">Lines</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Typography</label>
+                    <select id="setting-font" class="input-field cursor-pointer">
+                        <option value="Raleway Dots">Dotted (Tracing)</option>
+                        <option value="Codystar">Codystar (Dots)</option>
+                        <option value="Dancing Script">Cursive</option>
+                        <option value="Raleway">Sans Serif (Print)</option>
+                    </select>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Preview Area -->
+        <section id="preview-container" class="flex-1 bg-stone-200/50 flex flex-col overflow-auto p-4 md:p-8 relative print:block min-h-[500px]">
+            <!-- The visual representation of the paper -->
+            <div id="sheet-paper" class="bg-white relative m-auto shadow-2xl flex-none">
+                <!-- Content rendered via JS -->
+            </div>
+            
+            <!-- Floating Zoom Hint or controls could go here -->
+            <div class="absolute bottom-6 right-6 bg-white/90 backdrop-blur px-4 py-2 rounded-full shadow-sm text-xs font-medium text-stone-500 pointer-events-none border border-white">
+                Preview (A4)
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Scripts -->
+    <script src="scripts/helpers.js"></script>
+    <!-- WebLLM Wrapper -->
+    <script src="scripts/ai.js"></script>
+    <script src="scripts/ui.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>
