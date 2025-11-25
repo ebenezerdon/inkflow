@@ -1,7 +1,7 @@
 window.AppLLM = {
   engine: null,
   ready: false,
-  modelId: localStorage.getItem('app.llm.model') || 'Hermes-2-Pro-Llama-3-8B-q4f16_1-MLC',
+  modelId: 'gemma-2-2b-it-q4f16_1-MLC',
 
   /**
    * Load the model once. Use IndexedDB cache so subsequent sessions start fast.
