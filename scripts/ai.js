@@ -1,7 +1,7 @@
 window.AppLLM = {
   engine: null,
   ready: false,
-  modelId: 'Llama-3.2-1B-Instruct-q4f16_1-MLC',
+  modelId: 'Qwen2.5-1.5B-Instruct-q4f16_1-MLC',
 
   /**
    * Load the model once. Use IndexedDB cache so subsequent sessions start fast.
