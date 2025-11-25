@@ -5,7 +5,7 @@ window.App = window.App || {};
   const DEFAULT_STATE = {
     paperSize: 'A4',
     orientation: 'portrait',
-    guideSize: 20, // mm line height
+    guideSize: 14, // mm line height
     fontFamily: 'Raleway Dots',
     fontColor: '#000000',
     guideColor: '#9ca3af',
