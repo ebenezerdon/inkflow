@@ -122,6 +122,12 @@ window.App = window.App || {};
        const topic = $('#ai-topic').val() || 'fun facts';
        await generateContent(topic);
     });
+    $('#ai-topic').on('keypress', function(e) {
+       if (e.which === 13) {
+          e.preventDefault();
+          $('#btn-generate-ai').click();
+       }
+    });
     
     // Mode Switching
     $('.mode-btn').on('click', function() {
