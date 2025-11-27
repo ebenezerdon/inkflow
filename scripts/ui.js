@@ -180,6 +180,7 @@ window.App = window.App || {};
      } catch(err) {
         console.error(err);
         alert('AI Error: ' + err.message);
+     } finally {
         $btn.prop('disabled', false).removeClass('opacity-50 cursor-wait');
         $progress.addClass('hidden');
         $status.text('');
