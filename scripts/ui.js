@@ -202,7 +202,7 @@ window.App = window.App || {};
 
     // Metrics
     const lineHeightMm = parseInt(state.guideSize);
-    const fontSize = lineHeightMm * 0.75;
+    const fontSize = lineHeightMm * (parseFloat(state.textScale) || 0.75);
     const pageHeightMm = 297;
     const rowsPerPage = Math.floor(pageHeightMm / lineHeightMm);
     
